@@ -1,4 +1,4 @@
-import pygame
+import pygame 
 import random
 
 # Initialize pygame
@@ -12,11 +12,10 @@ BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 
 # Load assets
-unicorn_img = pygame.image.load("unicorn1.png") 
- # Add a unicorn sprite
+unicorn_img = pygame.image.load("unicorn1.png")  # Add a unicorn sprite
 cloud_img = pygame.image.load("rock.png")  # Add cloud obstacles
 bg_img = pygame.image.load("background3.jpg")  # Colorful background
-powerup_img = pygame.image.load("power_up.png")  # Power-up icon
+powerup_img = pygame.image.load("power_up.png")  # Reward icon
 
 # Resize images
 unicorn_img = pygame.transform.scale(unicorn_img, (90, 90))
@@ -49,12 +48,13 @@ class Unicorn:
         self.vel_y = 0
         self.gravity = 1
         self.is_jumping = False
-        self.can_double_jump = True
+        self.can_double_jump = True  # Always enabled
 
     def jump(self):
         if not self.is_jumping:
             self.vel_y = -15
             self.is_jumping = True
+            self.can_double_jump = True  # Reset double jump on landing
             jump_sound.play()
         elif self.can_double_jump:
             self.vel_y = -15
@@ -95,7 +95,7 @@ class Cloud:
     def draw(self):
         screen.blit(self.image, (self.x, self.y))
 
-# Power-up class
+# Reward class
 class PowerUp:
     def __init__(self):
         self.image = powerup_img
@@ -119,6 +119,7 @@ obstacles = []
 power_ups = []
 score = 0
 high_score = 0
+coins = 0  # Collectible rewards
 game_over = False
 game_over_sound_played = False
 running = True
@@ -147,6 +148,7 @@ while running:
                 obstacles.clear()
                 power_ups.clear()
                 score = 0
+                coins = 0
                 game_over = False
                 game_over_sound_played = False
                 pygame.mixer.music.play(-1)
@@ -180,10 +182,7 @@ while running:
             power_up.draw()
             if player.collide_with(power_up):
                 power_ups.remove(power_up)
-                player.can_double_jump = True
-
-        for obstacle in obstacles:
-            obstacle.speed = 7 + score // 10
+                coins += 1  # Collecting power-ups adds to coins
 
         score += 0.1
         high_score = max(high_score, int(score))
@@ -192,6 +191,8 @@ while running:
         screen.blit(score_text, (10, 10))
         high_score_text = font.render(f"High Score: {high_score}", True, WHITE)
         screen.blit(high_score_text, (WIDTH - high_score_text.get_width() - 10, 10))
+        coins_text = font.render(f"Coins: {coins}", True, WHITE)
+        screen.blit(coins_text, (WIDTH // 2, 10))
 
         pygame.display.update()
     
