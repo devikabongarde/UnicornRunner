@@ -12,7 +12,8 @@ BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 
 # Load assets
-unicorn_img = pygame.image.load("unicorn.png")  # Add a unicorn sprite
+unicorn_img = pygame.image.load("unicorn1.png") 
+ # Add a unicorn sprite
 cloud_img = pygame.image.load("rock.png")  # Add cloud obstacles
 bg_img = pygame.image.load("background3.jpg")  # Colorful background
 powerup_img = pygame.image.load("power_up.png")  # Power-up icon
@@ -39,7 +40,10 @@ font_large = pygame.font.Font(None, 72)
 # Character class
 class Unicorn:
     def __init__(self):
-        self.image = unicorn_img
+        self.images = [pygame.image.load("unicorn1.png"), pygame.image.load("unicorn2.png")]
+        self.images = [pygame.transform.scale(img, (90, 90)) for img in self.images]
+        self.current_frame = 0
+        self.frame_count = 0  # Controls animation speed
         self.x = 100
         self.y = GROUND_Y - 120
         self.vel_y = 0
@@ -64,8 +68,13 @@ class Unicorn:
             self.y = GROUND_Y - 120
             self.is_jumping = False
 
+        # Update animation frame
+        self.frame_count += 1
+        if self.frame_count % 5 == 0:  # Change image every 10 frames
+            self.current_frame = (self.current_frame + 1) % 2
+
     def draw(self):
-        screen.blit(self.image, (self.x, self.y))
+        screen.blit(self.images[self.current_frame], (self.x, self.y))
 
     def collide_with(self, obj):
         unicorn_rect = pygame.Rect(self.x, self.y, 60, 60)
